@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"os"
+	"os/exec"
+)
 
 func GetWorkingDirectory() (string, error) {
 	dir, err := os.Getwd()
@@ -20,4 +23,11 @@ func MakeDirectory(path string) error {
 	}
 
 	return nil
+}
+
+func EnsureGitInstall() error {
+	_, err := exec.LookPath(
+		"git",
+	)
+	return err
 }

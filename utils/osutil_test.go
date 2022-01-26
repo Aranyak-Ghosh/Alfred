@@ -21,3 +21,10 @@ func TestMakeDir(t *testing.T) {
 		t.Errorf("Error: %s\n", err)
 	}
 }
+
+func TestGitInstall(t *testing.T) {
+	if err := EnsureGitInstall(); err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}
