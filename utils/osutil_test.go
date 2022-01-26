@@ -23,7 +23,21 @@ func TestMakeDir(t *testing.T) {
 }
 
 func TestGitInstall(t *testing.T) {
-	if err := EnsureGitInstall(); err != nil {
+	if err := ensureGitInstall(); err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}
+
+func TestGoInstall(t *testing.T) {
+	if err := ensureGoInstall(); err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}
+
+func TestCloneProject(t *testing.T) {
+	if err := CloneProject("https://github.com/Aranyak-Ghosh/gode-gen.git", "TestClone"); err != nil {
 		t.Errorf("Error: %s\n", err)
 		t.Fail()
 	}
