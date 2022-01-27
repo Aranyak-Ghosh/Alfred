@@ -4,6 +4,8 @@ import (
 	"alfred/models"
 	"alfred/utils"
 	"fmt"
+	"os"
+	"path"
 )
 
 func InitializeRepoStore() error {
@@ -128,4 +130,37 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 
 	err = utils.WriteFile(configPath+"/repositories.yaml", txt)
 	return err
+}
+
+func CreateProject(tag string, projectName string, gitInit bool) error {
+	if tag != "" {
+		fmt.Printf("Creating project %s with tag %s\n", projectName, tag)
+		repoStore, err := GetRepoStore()
+
+		if err != nil {
+			return err
+		}
+		if repoUrl, ok := repoStore[tag]; ok {
+			fmt.Printf("Cloning repository %s\n", repoUrl)
+			err = utils.CloneProject(repoUrl, projectName)
+			if err != nil {
+				return err
+			}
+
+		} else {
+			return fmt.Errorf("Tag %s not found in repository store", tag)
+		}
+	} else {
+		fmt.Printf("Creating project %s\n", projectName)
+		wd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		projectDirectory := path.Join(wd, projectName)
+		err = utils.MakeDirectory(projectDirectory)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
