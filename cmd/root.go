@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"gogen/utils"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,10 @@ and potentially configured to set templates which can be used to
 create project scaffolding code and utility tools along with having some pre-configured templates.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to gogen!")
+		err := utils.EnsureDependencyInstall()
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
