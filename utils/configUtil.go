@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"gogen/models"
+	"alfred/models"
 
 	"gopkg.in/yaml.v2"
 )
