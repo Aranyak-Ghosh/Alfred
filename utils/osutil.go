@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -15,6 +16,29 @@ func GetWorkingDirectory() (string, error) {
 	}
 
 	return dir, nil
+}
+
+func GetDirectoryContents(path string) ([]string, error) {
+	files, err := ioutil.ReadDir(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var fileNames []string
+
+	for _, file := range files {
+		file_data := file.Name()
+		if file.IsDir() {
+			file_data = fmt.Sprintf("%-15s%4s", file_data+"/", "dir")
+		} else {
+			file_data = fmt.Sprintf("%-15s%4s", file_data+"/", "file")
+
+		}
+		fileNames = append(fileNames, file_data)
+	}
+
+	return fileNames, nil
 }
 
 func MakeDirectory(path string) error {
