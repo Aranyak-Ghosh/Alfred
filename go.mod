@@ -1,4 +1,4 @@
-module gogen
+module alfred
 
 go 1.17
 
