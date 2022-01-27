@@ -92,3 +92,40 @@ func AddReposToStoreFromFile(filePath string, overwrite bool) error {
 
 	return err
 }
+
+func UpdateRepoStore(repos map[string]string, create bool) error {
+	currentRepo, err := GetRepoStore()
+
+	if err != nil {
+		return err
+	}
+
+	for tag, url := range repos {
+		if val, ok := currentRepo[tag]; ok {
+			fmt.Printf("Tag %s found with repository url %s\n", tag, val)
+			fmt.Printf("Updating tage to %s\n", url)
+			if val != url {
+				currentRepo[tag] = url
+			}
+		} else if create {
+			fmt.Printf("Tag %s not found! Creating tag\n", tag)
+
+			currentRepo[tag] = url
+		} else {
+			return fmt.Errorf("Tag %s not found in repository store", tag)
+		}
+	}
+
+	txt, err := utils.SerializeConfig(currentRepo)
+	if err != nil {
+		return err
+	}
+
+	configPath, err := utils.GetConfigPath()
+	if err != nil {
+		return err
+	}
+
+	err = utils.WriteFile(configPath+"/repositories.yaml", txt)
+	return err
+}
