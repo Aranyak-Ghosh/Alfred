@@ -22,6 +22,7 @@ var createCmd = &cobra.Command{
 		name := cmd.Flag("name").Value.String()
 		gitInit := cmd.Flag("gitInit").Value.String()
 		codeOpen := cmd.Flag("code").Value.String()
+		explorerOpen := cmd.Flag("open").Value.String()
 		if tag == "" {
 			fmt.Println("No tag specified. Creating an empty project")
 		}
@@ -37,7 +38,7 @@ var createCmd = &cobra.Command{
 			}
 		}
 
-		err := services.CreateProject(tag, name, gitInit == "true", codeOpen == "true")
+		err := services.CreateProject(tag, name, gitInit == "true", codeOpen == "true", explorerOpen == "true")
 
 		if err != nil {
 			fmt.Println(err)
@@ -61,5 +62,5 @@ func init() {
 	createCmd.Flags().StringP("name", "n", "", "Name of the project to be created")
 	createCmd.Flags().BoolP("gitInit", "g", false, "Initialize empty git repository")
 	createCmd.Flags().BoolP("code", "c", false, "Open project in VS Code")
-	createCmd.Flags().BoolP("open", "o", true, "Open project in file explorer")
+	createCmd.Flags().BoolP("open", "o", false, "Open project in file explorer")
 }

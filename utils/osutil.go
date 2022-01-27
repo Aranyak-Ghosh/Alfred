@@ -6,7 +6,14 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 )
+
+var openCommand map[string][]string = map[string][]string{
+	"windows": []string{"explorer"},
+	"darwin":  []string{"open"},
+	"default": []string{"xdg-open"},
+}
 
 func GetWorkingDirectory() (string, error) {
 	dir, err := os.Getwd()
@@ -198,6 +205,29 @@ func OpenInCode(path string) error {
 	}
 
 	return nil
+}
+
+func OpenInExplorer(path string) error {
+	openCmd := getOpenCommand()
+	fmt.Printf("Opening path %s\n", path)
+
+	cmd := exec.Command(openCmd[0], path)
+
+	err := cmd.Run()
+
+	if err != nil && err.Error() != "exit status 1" {
+		return err
+	}
+
+	return nil
+}
+
+func getOpenCommand() []string {
+	if val, ok := openCommand[runtime.GOOS]; ok {
+		return val
+	} else {
+		return openCommand["default"]
+	}
 }
 
 func getGitPath() (string, error) {

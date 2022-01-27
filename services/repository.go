@@ -132,7 +132,7 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 	return err
 }
 
-func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool) error {
+func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool, explorerOpen bool) error {
 	wd, err := os.Getwd()
 	if tag != "" {
 		fmt.Printf("Creating project %s with tag %s\n", projectName, tag)
@@ -193,6 +193,16 @@ func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool) 
 		fmt.Printf("Opening project in code\n")
 		projectDirectory := path.Join(wd, projectName)
 		err = utils.OpenInCode(projectDirectory)
+		if err != nil {
+			return err
+		}
+	}
+
+	if explorerOpen {
+		projectDirectory := wd + string(os.PathSeparator) + projectName
+		fmt.Printf("Opening project in explorer\n")
+
+		err = utils.OpenInExplorer(projectDirectory)
 		if err != nil {
 			return err
 		}
