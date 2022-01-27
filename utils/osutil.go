@@ -2,10 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 )
 
 func GetWorkingDirectory() (string, error) {
@@ -16,6 +16,18 @@ func GetWorkingDirectory() (string, error) {
 	}
 
 	return dir, nil
+}
+
+func GetConfigPath() (string, error) {
+	configPath, err := os.UserConfigDir()
+
+	if err != nil {
+		return "", err
+	}
+
+	configPath = path.Join(configPath, "alfred")
+
+	return configPath, nil
 }
 
 func GetDirectoryContents(path string) ([]string, error) {
@@ -53,7 +65,7 @@ func MakeDirectory(path string) error {
 
 func WriteFile(path string, data []byte) error {
 
-	err := os.WriteFile(path, data, fs.ModeAppend)
+	err := os.WriteFile(path, data, 0664)
 
 	if err != nil {
 		return err
@@ -62,7 +74,7 @@ func WriteFile(path string, data []byte) error {
 }
 
 func AppendToFile(path string, data []byte) error {
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0664)
 
 	if err != nil {
 		return err

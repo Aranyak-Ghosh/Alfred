@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/services"
 	"alfred/utils"
 	"fmt"
 	"os"
@@ -19,10 +20,15 @@ var rootCmd = &cobra.Command{
 	Short:   "A CLI tool to generate code scaffolding for day to day tasks",
 	Long: `A CLI interface that can be used to initialize projects 
 and potentially configured to set templates which can be used to 
-create project scaffolding code and utility tools along with having some pre-configured templates.`,
+create project scaffolding code and utility tools along with having 
+some pre-configured templates.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to Alfred!")
 		err := utils.EnsureDependencyInstall()
+		if err != nil {
+			fmt.Println(err)
+		}
+		err = services.InitializeRepoStore()
 		if err != nil {
 			fmt.Println(err)
 		}
