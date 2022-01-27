@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/services"
 	"alfred/utils"
 	"fmt"
 	"os"
@@ -24,6 +25,10 @@ some pre-configured templates.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to Alfred!")
 		err := utils.EnsureDependencyInstall()
+		if err != nil {
+			fmt.Println(err)
+		}
+		err = services.InitializeRepoStore()
 		if err != nil {
 			fmt.Println(err)
 		}

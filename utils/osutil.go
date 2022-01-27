@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 )
 
 func GetWorkingDirectory() (string, error) {
@@ -16,6 +17,18 @@ func GetWorkingDirectory() (string, error) {
 	}
 
 	return dir, nil
+}
+
+func GetConfigPath() (string, error) {
+	configPath, err := os.UserConfigDir()
+
+	if err != nil {
+		return "", err
+	}
+
+	configPath = path.Join(configPath, "alfred")
+
+	return configPath, nil
 }
 
 func GetDirectoryContents(path string) ([]string, error) {
