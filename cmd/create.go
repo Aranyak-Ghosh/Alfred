@@ -29,7 +29,7 @@ var createCmd = &cobra.Command{
 		if name == "" {
 			fmt.Println("No name specified.")
 			if tag != "" {
-				fmt.Println("Repository name will be used to create the project")
+				fmt.Println("Tag name will be used to create the project")
 			} else {
 				fmt.Println("Error: project name is required!")
 				cmd.Help()

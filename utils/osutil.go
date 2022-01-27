@@ -103,14 +103,15 @@ func ReadFile(path string) ([]byte, error) {
 	return ioutil.ReadAll(file)
 }
 
+func DeleteDir(path string) error {
+	err := os.RemoveAll(path)
+	return err
+}
+
 func EnsureDependencyInstall() error {
 	if err := ensureGitInstall(); err != nil {
 		return err
 	}
-
-	// if err := ensureGoInstall(); err != nil {
-	// 	return err
-	// }
 
 	return nil
 }
@@ -129,6 +130,38 @@ func CloneProject(url string, projectName string) error {
 
 	cmd := &exec.Cmd{
 		Path:   gitPath,
+		Args:   args,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	err = cmd.Run()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func InitEmptyGitRepo(projectName string) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	projectPath := path.Join(wd, projectName)
+
+	gitPath, err := getGitPath()
+
+	if err != nil {
+		return err
+	}
+
+	args := []string{gitPath, "init"}
+
+	cmd := &exec.Cmd{
+		Path:   gitPath,
+		Dir:    projectPath,
 		Args:   args,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,

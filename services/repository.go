@@ -133,6 +133,7 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 }
 
 func CreateProject(tag string, projectName string, gitInit bool) error {
+	wd, err := os.Getwd()
 	if tag != "" {
 		fmt.Printf("Creating project %s with tag %s\n", projectName, tag)
 		repoStore, err := GetRepoStore()
@@ -142,9 +143,24 @@ func CreateProject(tag string, projectName string, gitInit bool) error {
 		}
 		if repoUrl, ok := repoStore[tag]; ok {
 			fmt.Printf("Cloning repository %s\n", repoUrl)
+			if projectName == "" {
+				projectName = tag
+			}
 			err = utils.CloneProject(repoUrl, projectName)
 			if err != nil {
 				return err
+			}
+
+			if gitInit {
+				fmt.Printf("Deleteing .git folder\n")
+				err = utils.DeleteDir(path.Join(wd, projectName, ".git"))
+				if err != nil {
+					return err
+				}
+				err = utils.InitEmptyGitRepo(projectName)
+				if err != nil {
+					return err
+				}
 			}
 
 		} else {
@@ -152,12 +168,16 @@ func CreateProject(tag string, projectName string, gitInit bool) error {
 		}
 	} else {
 		fmt.Printf("Creating project %s\n", projectName)
-		wd, err := os.Getwd()
+
 		if err != nil {
 			return err
 		}
 		projectDirectory := path.Join(wd, projectName)
 		err = utils.MakeDirectory(projectDirectory)
+		if err != nil {
+			return err
+		}
+		err = utils.InitEmptyGitRepo(projectName)
 		if err != nil {
 			return err
 		}
