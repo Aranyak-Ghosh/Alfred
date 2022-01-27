@@ -65,7 +65,7 @@ func MakeDirectory(path string) error {
 
 func WriteFile(path string, data []byte) error {
 
-	err := os.WriteFile(path, data, 0644)
+	err := os.WriteFile(path, data, 0664)
 
 	if err != nil {
 		return err
@@ -74,7 +74,7 @@ func WriteFile(path string, data []byte) error {
 }
 
 func AppendToFile(path string, data []byte) error {
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0664)
 
 	if err != nil {
 		return err
