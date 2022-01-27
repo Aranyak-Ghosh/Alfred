@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/services"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -13,15 +14,27 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Update the repository for a given tag",
+	Long: `Update the repository for a given tag. If the tag does not exist,
+the tag will be created if the create flag is set.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
+		tag := cmd.Flag("tag").Value.String()
+		repo := cmd.Flag("repo").Value.String()
+		create := cmd.Flag("create").Value.String()
+
+		if tag == "" || repo == "" {
+			fmt.Println("Error: Missing required flag(s)")
+			cmd.Help()
+			return
+		}
+		fmt.Printf("Updating %s repository to %s\n", tag, repo)
+		err := services.UpdateRepoStore(map[string]string{tag: repo}, create == "true")
+
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		fmt.Println("Completed!")
 	},
 }
 
@@ -37,4 +50,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	updateCmd.Flags().StringP("tag", "t", "", "Template Tag used to update repository collection")
+	updateCmd.Flags().StringP("repo", "r", "", "URL of the repository to add")
+	updateCmd.Flags().BoolP("create", "c", false, "Create the tag if it does not exist")
+
 }
