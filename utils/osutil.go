@@ -175,6 +175,31 @@ func InitEmptyGitRepo(projectName string) error {
 	return nil
 }
 
+func OpenInCode(path string) error {
+
+	codePath, err := getCodePath()
+
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Cmd{
+		Path:   codePath,
+		Dir:    path,
+		Args:   []string{codePath, path},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	err = cmd.Run()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getGitPath() (string, error) {
 	gitPath, err := exec.LookPath(
 		"git",
@@ -185,6 +210,18 @@ func getGitPath() (string, error) {
 	}
 
 	return gitPath, nil
+}
+
+func getCodePath() (string, error) {
+	codePath, err := exec.LookPath(
+		"code",
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return codePath, nil
 }
 
 func ensureGitInstall() error {

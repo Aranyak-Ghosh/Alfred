@@ -21,7 +21,7 @@ var createCmd = &cobra.Command{
 		tag := cmd.Flag("tag").Value.String()
 		name := cmd.Flag("name").Value.String()
 		gitInit := cmd.Flag("gitInit").Value.String()
-
+		codeOpen := cmd.Flag("code").Value.String()
 		if tag == "" {
 			fmt.Println("No tag specified. Creating an empty project")
 		}
@@ -37,7 +37,7 @@ var createCmd = &cobra.Command{
 			}
 		}
 
-		err := services.CreateProject(tag, name, gitInit == "true")
+		err := services.CreateProject(tag, name, gitInit == "true", codeOpen == "true")
 
 		if err != nil {
 			fmt.Println(err)
@@ -56,7 +56,10 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
+	createCmd.Flags().BoolP("help", "h", false, "Show help")
 	createCmd.Flags().StringP("tag", "t", "", "Tag of the template to be used")
 	createCmd.Flags().StringP("name", "n", "", "Name of the project to be created")
 	createCmd.Flags().BoolP("gitInit", "g", false, "Initialize empty git repository")
+	createCmd.Flags().BoolP("code", "c", false, "Open project in VS Code")
+	createCmd.Flags().BoolP("open", "o", true, "Open project in file explorer")
 }
