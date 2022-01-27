@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"io/fs"
+	"io/ioutil"
 	"os"
 	"os/exec"
 )
@@ -25,14 +27,54 @@ func MakeDirectory(path string) error {
 	return nil
 }
 
+func WriteFile(path string, data []byte) error {
+
+	err := os.WriteFile(path, data, fs.ModeAppend)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AppendToFile(path string, data []byte) error {
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	_, err = file.Write(data)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ReadFile(path string) ([]byte, error) {
+	file, err := os.Open(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	return ioutil.ReadAll(file)
+}
+
 func EnsureDependencyInstall() error {
 	if err := ensureGitInstall(); err != nil {
 		return err
 	}
 
-	if err := ensureGoInstall(); err != nil {
-		return err
-	}
+	// if err := ensureGoInstall(); err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

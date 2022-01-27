@@ -42,3 +42,21 @@ func TestCloneProject(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestWriteFileWithOverwrite(t *testing.T) {
+	err := WriteFile("c:\\Projects\\Personal\\go-code-generator\\utils\\test\\sub\\test.txt", []byte("Hello World Override2"))
+
+	if err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}
+
+func TestAppendToFile(t *testing.T) {
+	err := AppendToFile("c:\\Projects\\Personal\\go-code-generator\\utils\\test\\sub\\test.txt", []byte("Hello World Override"))
+
+	if err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}
