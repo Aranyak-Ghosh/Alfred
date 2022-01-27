@@ -121,9 +121,15 @@ func CloneProject(url string, projectName string) error {
 		return err
 	}
 
+	args := []string{gitPath, "clone", url}
+
+	if projectName != "" {
+		args = append(args, projectName)
+	}
+
 	cmd := &exec.Cmd{
 		Path:   gitPath,
-		Args:   []string{gitPath, "clone", url, projectName},
+		Args:   args,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
