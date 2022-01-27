@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -66,7 +65,7 @@ func MakeDirectory(path string) error {
 
 func WriteFile(path string, data []byte) error {
 
-	err := os.WriteFile(path, data, fs.ModeAppend)
+	err := os.WriteFile(path, data, 0644)
 
 	if err != nil {
 		return err
