@@ -132,6 +132,35 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 	return err
 }
 
+func RemoveRepoFromStore(tags []string) error {
+	currentRepo, err := GetRepoStore()
+
+	if err != nil {
+		return err
+	}
+
+	for _, tag := range tags {
+		if _, ok := currentRepo[tag]; ok {
+			delete(currentRepo, tag)
+		} else {
+			return fmt.Errorf("Tag %s not found in repository store", tag)
+		}
+	}
+
+	txt, err := utils.SerializeConfig(currentRepo)
+	if err != nil {
+		return err
+	}
+	configPath, err := utils.GetConfigPath()
+	if err != nil {
+		return err
+	}
+
+	err = utils.WriteFile(configPath+"/repositories.yaml", txt)
+	return err
+
+}
+
 func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool, explorerOpen bool) error {
 	wd, err := os.Getwd()
 	if tag != "" {
