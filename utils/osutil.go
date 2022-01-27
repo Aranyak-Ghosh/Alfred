@@ -6,7 +6,14 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 )
+
+var openCommand map[string][]string = map[string][]string{
+	"windows": []string{"explorer"},
+	"darwin":  []string{"open"},
+	"default": []string{"xdg-open"},
+}
 
 func GetWorkingDirectory() (string, error) {
 	dir, err := os.Getwd()
@@ -103,14 +110,15 @@ func ReadFile(path string) ([]byte, error) {
 	return ioutil.ReadAll(file)
 }
 
+func DeleteDir(path string) error {
+	err := os.RemoveAll(path)
+	return err
+}
+
 func EnsureDependencyInstall() error {
 	if err := ensureGitInstall(); err != nil {
 		return err
 	}
-
-	// if err := ensureGoInstall(); err != nil {
-	// 	return err
-	// }
 
 	return nil
 }
@@ -121,9 +129,15 @@ func CloneProject(url string, projectName string) error {
 		return err
 	}
 
+	args := []string{gitPath, "clone", url}
+
+	if projectName != "" {
+		args = append(args, projectName)
+	}
+
 	cmd := &exec.Cmd{
 		Path:   gitPath,
-		Args:   []string{gitPath, "clone", url, projectName},
+		Args:   args,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
@@ -136,6 +150,86 @@ func CloneProject(url string, projectName string) error {
 	return nil
 }
 
+func InitEmptyGitRepo(projectName string) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	projectPath := path.Join(wd, projectName)
+
+	gitPath, err := getGitPath()
+
+	if err != nil {
+		return err
+	}
+
+	args := []string{gitPath, "init"}
+
+	cmd := &exec.Cmd{
+		Path:   gitPath,
+		Dir:    projectPath,
+		Args:   args,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	err = cmd.Run()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func OpenInCode(path string) error {
+
+	codePath, err := getCodePath()
+
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Cmd{
+		Path:   codePath,
+		Dir:    path,
+		Args:   []string{codePath, path},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	err = cmd.Run()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func OpenInExplorer(path string) error {
+	openCmd := getOpenCommand()
+	fmt.Printf("Opening path %s\n", path)
+
+	cmd := exec.Command(openCmd[0], path)
+
+	err := cmd.Run()
+
+	if err != nil && err.Error() != "exit status 1" {
+		return err
+	}
+
+	return nil
+}
+
+func getOpenCommand() []string {
+	if val, ok := openCommand[runtime.GOOS]; ok {
+		return val
+	} else {
+		return openCommand["default"]
+	}
+}
+
 func getGitPath() (string, error) {
 	gitPath, err := exec.LookPath(
 		"git",
@@ -146,6 +240,18 @@ func getGitPath() (string, error) {
 	}
 
 	return gitPath, nil
+}
+
+func getCodePath() (string, error) {
+	codePath, err := exec.LookPath(
+		"code",
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return codePath, nil
 }
 
 func ensureGitInstall() error {

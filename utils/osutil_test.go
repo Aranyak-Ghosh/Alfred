@@ -60,3 +60,12 @@ func TestAppendToFile(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestOpenInExplorer(t *testing.T) {
+	err := OpenInExplorer("C:\\Projects\\Personal\\go-code-generator\\utils\\test\\sub")
+
+	if err != nil {
+		t.Errorf("Error: %s\n", err)
+		t.Fail()
+	}
+}

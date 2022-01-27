@@ -4,6 +4,8 @@ import (
 	"alfred/models"
 	"alfred/utils"
 	"fmt"
+	"os"
+	"path"
 )
 
 func InitializeRepoStore() error {
@@ -128,4 +130,83 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 
 	err = utils.WriteFile(configPath+"/repositories.yaml", txt)
 	return err
+}
+
+func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool, explorerOpen bool) error {
+	wd, err := os.Getwd()
+	if tag != "" {
+		fmt.Printf("Creating project %s with tag %s\n", projectName, tag)
+		repoStore, err := GetRepoStore()
+
+		if err != nil {
+			return err
+		}
+		if repoUrl, ok := repoStore[tag]; ok {
+			fmt.Printf("Cloning repository %s\n", repoUrl)
+			if projectName == "" {
+				projectName = tag
+			}
+			err = utils.CloneProject(repoUrl, projectName)
+			if err != nil {
+				return err
+			}
+			fmt.Println("Project cloned")
+
+			if gitInit {
+				fmt.Printf("Deleteing .git folder\n")
+				err = utils.DeleteDir(path.Join(wd, projectName, ".git"))
+				if err != nil {
+					return err
+				}
+				fmt.Printf("Initializing git repository\n")
+				err = utils.InitEmptyGitRepo(projectName)
+				if err != nil {
+					return err
+				}
+			}
+
+		} else {
+			return fmt.Errorf("Tag %s not found in repository store", tag)
+		}
+	} else {
+		fmt.Printf("Creating project %s\n", projectName)
+
+		if err != nil {
+			return err
+		}
+		projectDirectory := path.Join(wd, projectName)
+		err = utils.MakeDirectory(projectDirectory)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Project directory created")
+		if gitInit {
+			fmt.Printf("Initializing git repository\n")
+			err = utils.InitEmptyGitRepo(projectName)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if codeOpen {
+		fmt.Printf("Opening project in code\n")
+		projectDirectory := path.Join(wd, projectName)
+		err = utils.OpenInCode(projectDirectory)
+		if err != nil {
+			return err
+		}
+	}
+
+	if explorerOpen {
+		projectDirectory := wd + string(os.PathSeparator) + projectName
+		fmt.Printf("Opening project in explorer\n")
+
+		err = utils.OpenInExplorer(projectDirectory)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
