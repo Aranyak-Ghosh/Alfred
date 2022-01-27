@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/services"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -17,7 +18,16 @@ var lsCmd = &cobra.Command{
 	Short:   "List registered repository",
 	Long:    `Get a list of all repositories currently registered in the collection`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ls called")
+		repos, err := services.GetRepoStore()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Printf("%-15s %s\n", "Tag", "Repository")
+		for tag, url := range repos {
+			fmt.Printf("%-15s %s\n", tag, url)
+		}
+
 	},
 }
 
