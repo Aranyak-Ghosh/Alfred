@@ -17,7 +17,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "alfred",
 	Short: "A CLI tool to generate code scaffolding for day to day tasks",
-	Long: `A CLI interface that can be used to initialize projects 
+	Long: `Alfred is a CLI tool that can be used to initialize projects 
 and potentially configured to set templates which can be used to 
 create project scaffolding code and utility tools along with having 
 some pre-configured templates.`,
@@ -26,11 +26,14 @@ some pre-configured templates.`,
 		err := utils.EnsureDependencyInstall()
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
 		err = services.InitializeRepoStore()
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
+		cmd.Help()
 	},
 }
 
