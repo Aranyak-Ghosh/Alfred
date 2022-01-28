@@ -15,9 +15,8 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "alfred",
-	Aliases: []string{"alfd"},
-	Short:   "A CLI tool to generate code scaffolding for day to day tasks",
+	Use:   "alfred",
+	Short: "A CLI tool to generate code scaffolding for day to day tasks",
 	Long: `A CLI interface that can be used to initialize projects 
 and potentially configured to set templates which can be used to 
 create project scaffolding code and utility tools along with having 
