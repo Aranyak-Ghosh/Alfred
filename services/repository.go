@@ -55,6 +55,12 @@ func AddRepoToStore(repos map[string]string, overwrite bool) error {
 		return err
 	}
 
+	for _, url := range repos {
+		if ok := utils.ValidateGitUrl(url); !ok {
+			return fmt.Errorf("Invalid git url %s", url)
+		}
+	}
+
 	if !overwrite {
 		for tag, url := range repos {
 			if val, ok := currentRepo[tag]; ok {
@@ -103,6 +109,9 @@ func UpdateRepoStore(repos map[string]string, create bool) error {
 	}
 
 	for tag, url := range repos {
+		if ok := utils.ValidateGitUrl(url); !ok {
+			return fmt.Errorf("Invalid git url %s", url)
+		}
 		if val, ok := currentRepo[tag]; ok {
 			fmt.Printf("Tag %s found with repository url %s\n", tag, val)
 			fmt.Printf("Updating tage to %s\n", url)
