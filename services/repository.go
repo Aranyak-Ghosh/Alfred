@@ -48,23 +48,23 @@ func GetRepoStore() (models.RepoMap, error) {
 	return repos, nil
 }
 
-func AddRepoToStore(repos map[string]string, overwrite bool) error {
+func AddRepoToStore(repos map[string]models.Repo, overwrite bool) error {
 	currentRepo, err := GetRepoStore()
 
 	if err != nil {
 		return err
 	}
 
-	for _, url := range repos {
-		if ok := utils.ValidateGitUrl(url); !ok {
-			return fmt.Errorf("Invalid git url %s", url)
+	for _, repo := range repos {
+		if ok := utils.ValidateGitUrl(repo.Url); !ok {
+			return fmt.Errorf("Invalid git url %s", repo.Url)
 		}
 	}
 
 	if !overwrite {
-		for tag, url := range repos {
+		for tag, repo := range repos {
 			if val, ok := currentRepo[tag]; ok {
-				return fmt.Errorf("Tag %s already exists in repository store. Current URL: %s, New URL: %s", tag, val, url)
+				return fmt.Errorf("Tag %s already exists in repository store. Current URL: %s, Current Branch: %s, New URL: %s, New Branch: %s", tag, val.Url, val.Branch, repo.Url, repo.Branch)
 			}
 		}
 	}
@@ -101,27 +101,27 @@ func AddReposToStoreFromFile(filePath string, overwrite bool) error {
 	return err
 }
 
-func UpdateRepoStore(repos map[string]string, create bool) error {
+func UpdateRepoStore(repos map[string]models.Repo, create bool) error {
 	currentRepo, err := GetRepoStore()
 
 	if err != nil {
 		return err
 	}
 
-	for tag, url := range repos {
-		if ok := utils.ValidateGitUrl(url); !ok {
-			return fmt.Errorf("Invalid git url %s", url)
+	for tag, repo := range repos {
+		if ok := utils.ValidateGitUrl(repo.Url); !ok {
+			return fmt.Errorf("Invalid git url %s", repo.Url)
 		}
 		if val, ok := currentRepo[tag]; ok {
-			fmt.Printf("Tag %s found with repository url %s\n", tag, val)
-			fmt.Printf("Updating tage to %s\n", url)
-			if val != url {
-				currentRepo[tag] = url
+			fmt.Printf("Tag %s found with repository: \nUrl: %s\nBranch: %s\n", tag, val.Url, val.Branch)
+			fmt.Printf("Updating tag to \nUrl: %s\nBranch: %s\n", repo.Url, repo.Branch)
+			if val != repo {
+				currentRepo[tag] = repo
 			}
 		} else if create {
 			fmt.Printf("Tag %s not found! Creating tag\n", tag)
 
-			currentRepo[tag] = url
+			currentRepo[tag] = repo
 		} else {
 			return fmt.Errorf("Tag %s not found in repository store", tag)
 		}
@@ -179,12 +179,12 @@ func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool, 
 		if err != nil {
 			return err
 		}
-		if repoUrl, ok := repoStore[tag]; ok {
-			fmt.Printf("Cloning repository %s\n", repoUrl)
+		if repo, ok := repoStore[tag]; ok {
+			fmt.Printf("Cloning repository %s\n", repo)
 			if projectName == "" {
 				projectName = tag
 			}
-			err = utils.CloneProject(repoUrl, projectName)
+			err = utils.CloneProject(repo.Url, projectName)
 			if err != nil {
 				return err
 			}
