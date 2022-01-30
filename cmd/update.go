@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/models"
 	"alfred/services"
 	"fmt"
 
@@ -20,6 +21,7 @@ the tag will be created if the create flag is set.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		tag := cmd.Flag("tag").Value.String()
 		repo := cmd.Flag("repo").Value.String()
+		branch := cmd.Flag("branch").Value.String()
 		create := cmd.Flag("create").Value.String()
 
 		if tag == "" || repo == "" {
@@ -28,7 +30,7 @@ the tag will be created if the create flag is set.`,
 			return
 		}
 		fmt.Printf("Updating %s repository to %s\n", tag, repo)
-		err := services.UpdateRepoStore(map[string]string{tag: repo}, create == "true")
+		err := services.UpdateRepoStore(map[string]models.Repo{tag: {Url: repo, Branch: branch}}, create == "true")
 
 		if err != nil {
 			fmt.Println("Error:", err)
@@ -52,6 +54,7 @@ func init() {
 	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	updateCmd.Flags().StringP("tag", "t", "", "Template Tag used to update repository collection")
 	updateCmd.Flags().StringP("repo", "r", "", "URL of the repository to add")
+	updateCmd.Flags().StringP("branch", "b", "default", "Branch to use for the project. If not specified, the default branch will be used")
 	updateCmd.Flags().BoolP("create", "c", false, "Create the tag if it does not exist")
 
 }

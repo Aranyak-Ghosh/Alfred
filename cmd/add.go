@@ -32,7 +32,7 @@ var addCmd = &cobra.Command{
 		}
 		if tag != "" && repo != "" {
 			fmt.Println("Adding project to repository collection...")
-			err := services.AddRepoToStore(map[string]models.Repo{tag: models.Repo{Url: repo, Branch: branch}}, overwrite == "true")
+			err := services.AddRepoToStore(map[string]models.Repo{tag: {Url: repo, Branch: branch}}, overwrite == "true")
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
