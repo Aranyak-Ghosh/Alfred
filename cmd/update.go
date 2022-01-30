@@ -54,7 +54,7 @@ func init() {
 	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	updateCmd.Flags().StringP("tag", "t", "", "Template Tag used to update repository collection")
 	updateCmd.Flags().StringP("repo", "r", "", "URL of the repository to add")
-	updateCmd.Flags().StringP("branch", "b", "default", "Branch to use for the project. If not specified, the default branch will be used")
+	updateCmd.Flags().StringP("branch", "b", "", "Branch to use for the project. If not specified, the default branch will be used")
 	updateCmd.Flags().BoolP("create", "c", false, "Create the tag if it does not exist")
 
 }

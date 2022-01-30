@@ -64,6 +64,6 @@ func init() {
 	addCmd.Flags().StringP("tag", "t", "", "Template Tag used to add project to repository collection")
 	addCmd.Flags().StringP("repo", "r", "", "URL of the repository to add")
 	addCmd.Flags().StringP("file", "f", "", "File path containing list of repos and tags to be added to collection")
-	addCmd.Flags().StringP("branch", "b", "default", "Branch to use for the project. If not specified, the default branch will be used")
+	addCmd.Flags().StringP("branch", "b", "", "Branch to use for the project. If not specified, the default branch will be used")
 	addCmd.Flags().BoolP("overwrite", "o", false, "Overwrite existing repository collection")
 }
