@@ -184,7 +184,7 @@ func CreateProject(tag string, projectName string, gitInit bool, codeOpen bool, 
 			if projectName == "" {
 				projectName = tag
 			}
-			err = utils.CloneProject(repo.Url, projectName)
+			err = utils.CloneProject(repo.Url, repo.Branch, projectName)
 			if err != nil {
 				return err
 			}
