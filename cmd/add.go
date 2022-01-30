@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"alfred/models"
 	"alfred/services"
 	"fmt"
 
@@ -20,6 +21,8 @@ var addCmd = &cobra.Command{
 		tag := cmd.Flag("tag").Value.String()
 		repo := cmd.Flag("repo").Value.String()
 		file := cmd.Flag("file").Value.String()
+		branch := cmd.Flag("branch").Value.String()
+
 		overwrite := cmd.Flag("overwrite").Value.String()
 
 		if (tag == "" || repo == "") && file == "" {
@@ -29,7 +32,7 @@ var addCmd = &cobra.Command{
 		}
 		if tag != "" && repo != "" {
 			fmt.Println("Adding project to repository collection...")
-			err := services.AddRepoToStore(map[string]string{tag: repo}, overwrite == "true")
+			err := services.AddRepoToStore(map[string]models.Repo{tag: {Url: repo, Branch: branch}}, overwrite == "true")
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
@@ -61,5 +64,6 @@ func init() {
 	addCmd.Flags().StringP("tag", "t", "", "Template Tag used to add project to repository collection")
 	addCmd.Flags().StringP("repo", "r", "", "URL of the repository to add")
 	addCmd.Flags().StringP("file", "f", "", "File path containing list of repos and tags to be added to collection")
+	addCmd.Flags().StringP("branch", "b", "", "Branch to use for the project. If not specified, the default branch will be used")
 	addCmd.Flags().BoolP("overwrite", "o", false, "Overwrite existing repository collection")
 }

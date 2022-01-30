@@ -123,7 +123,7 @@ func EnsureDependencyInstall() error {
 	return nil
 }
 
-func CloneProject(url string, projectName string) error {
+func CloneProject(url string, branch string, projectName string) error {
 	gitPath, err := getGitPath()
 	if err != nil {
 		return err
@@ -133,6 +133,10 @@ func CloneProject(url string, projectName string) error {
 
 	if projectName != "" {
 		args = append(args, projectName)
+	}
+
+	if branch != "" {
+		args = append(args, "--branch", branch)
 	}
 
 	cmd := &exec.Cmd{
