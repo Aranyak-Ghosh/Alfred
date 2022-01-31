@@ -23,9 +23,9 @@ var lsCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("%-15s %s\n", "Tag", "Repository")
-		for tag, url := range repos {
-			fmt.Printf("%-15s %s\n", tag, url)
+		fmt.Printf("%-15s %-80s %s\n", "Tag", "Repository", "Branch")
+		for tag, repo := range repos {
+			fmt.Printf("%-15s %-80s %s\n", tag, repo.Url, repo.Branch)
 		}
 
 	},
